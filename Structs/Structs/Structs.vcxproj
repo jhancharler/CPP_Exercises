@@ -147,7 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ModifyString.cpp" />
     <ClCompile Include="Structs.cpp" />
+    <ClCompile Include="Task.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ModifyString.h" />
+    <ClInclude Include="Task.h" />
+    <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

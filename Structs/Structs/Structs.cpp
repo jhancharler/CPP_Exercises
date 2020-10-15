@@ -1,7 +1,9 @@
-//
 #include <iostream>
+#include "User.h"
+#include "Task.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    Task task;
+    task.execute();
 }
