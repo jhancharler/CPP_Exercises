@@ -53,6 +53,7 @@ void Task::printHeading() {
 	std::ostringstream outStream;
 	int index;
 	float totalBalance;
+	float balanceSearched;
 	std::ofstream outFile(_outFileName);
 
 	auto streamUserDetails = [](std::ostringstream& oss, const User& u) {
@@ -73,15 +74,15 @@ void Task::printHeading() {
 	streamUserDetails(outStream, mostBalanceUser);
 	outStream << std::endl;
 
-	float balance = sum();
+	totalBalance = sum();
 	outStream << "Total Balance for all persons:\n";
-	outStream << std::left << std::setw(4) << "$" << std::left << balance << std::endl;
+	outStream << std::left << std::setw(4) << "$" << std::left << totalBalance << std::endl;
 
 	outStream << std::endl;
 	outStream << "Search Names:\n";
 	outStream << std::left << std::setw(10) << "ID #" << std::left << std::setw(20) << "NAME" << std::setw(15) << std::right << "BALANCE DUE" << std::endl;
 
-	float balanceSearched = 0;
+	balanceSearched = 0;
 	for (auto u : _searchedNames) {
 		streamUserDetails(outStream, u);
 		balanceSearched += u.balance;
@@ -115,7 +116,7 @@ int Task::searchLargestBalance() {
 
 	int index = -1;
 	float highest = -std::numeric_limits<float>::max();
-	for (int i = 0; i < _users.size(); i++) {
+	for (size_t i = 0; i < _users.size(); i++) {
 		if (highest < _users[i].balance) {
 			highest = _users[i].balance;
 			index = i;
@@ -127,7 +128,7 @@ int Task::searchLargestBalance() {
 float Task::sum() {
 
 	float sum = 0.f;
-	for (int i = 0; i < _users.size(); i++) {
+	for (size_t i = 0; i < _users.size(); i++) {
 		sum += _users[i].balance;
 	}
 	return sum;
