@@ -1,6 +1,11 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <exception>
+#include <math.h>
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
 
 #include "Task.h"
 #include "ModifyString.h"
@@ -25,6 +30,7 @@ void Task::populateUsers() {
 	std::ifstream inFile(_inFileName.c_str());
 	if (!inFile) {
 		std::cout << _inFileName << " could not be opened! \n";
+		throw std::runtime_error(_inFileName + " could not be opened!");
 		return;
 	}
 
@@ -42,12 +48,90 @@ void Task::populateUsers() {
 	}
 }
 
-void Task::printHeading(const User& u) {
+void Task::printHeading() {
 
+	std::ostringstream outStream;
+	int index;
+	float totalBalance;
+	std::ofstream outFile(_outFileName);
+
+	auto streamUserDetails = [](std::ostringstream& oss, const User& u) {
+		oss << std::left << std::setw(10) << u.id << std::left << std::setw(20) << u.name << std::setw(5) << std::right << "$" << std::setw(10) << std::right << std::fixed << u.balance << std::endl;
+	};
+
+	outStream << std::setprecision(2);
+	outStream << std::fixed;
+
+	outStream << "Higher Balance:\n";
+	outStream << std::left << std::setw(10) << "ID #" << std::left <<  std::setw(20) << "NAME" << std::setw(15) << std::right << "BALANCE DUE" << std::endl;
+	outStream << std::left << std::setw(10) << "----" << std::left << std::setw(20) << "--------------------" << std::setw(15) << std::right << "-----------" << std::endl;
+
+	index = searchLargestBalance();
+	User mostBalanceUser = _users[index];
+
+	// Largest balance:
+	streamUserDetails(outStream, mostBalanceUser);
+	outStream << std::endl;
+
+	float balance = sum();
+	outStream << "Total Balance for all persons:\n";
+	outStream << std::left << std::setw(4) << "$" << std::left << balance << std::endl;
+
+	outStream << std::endl;
+	outStream << "Search Names:\n";
+	outStream << std::left << std::setw(10) << "ID #" << std::left << std::setw(20) << "NAME" << std::setw(15) << std::right << "BALANCE DUE" << std::endl;
+
+	float balanceSearched = 0;
+	for (auto u : _searchedNames) {
+		streamUserDetails(outStream, u);
+		balanceSearched += u.balance;
+	}
+
+	outStream << std::endl;
+	outStream << std::setw(35) << std::right << "Total Balance Due: $" << std::right << std::setw(10) << balanceSearched << std::endl;
+	std::cout << "\n";
+
+	// Print to console
+	std::cout << outStream.str() << std::endl;
+
+	// Print to file
+	outFile << outStream.str();
+	outFile.close();
 }
 
-void searchBalance();
-void sum();
+std::ostringstream Task::printCols(std::string col1, std::string col2, std::string col3) {
+	
+	std::ostringstream outStream;
+
+	outStream << std::setw(10) << std::left << col1;
+	outStream << col2;
+	outStream << std::setw(16) << std::right << col3 << "\n";
+
+	return outStream;
+	
+}
+
+int Task::searchLargestBalance() {
+
+	int index = -1;
+	float highest = -std::numeric_limits<float>::max();
+	for (int i = 0; i < _users.size(); i++) {
+		if (highest < _users[i].balance) {
+			highest = _users[i].balance;
+			index = i;
+		}
+	}
+	return index;
+}
+
+float Task::sum() {
+
+	float sum = 0.f;
+	for (int i = 0; i < _users.size(); i++) {
+		sum += _users[i].balance;
+	}
+	return sum;
+}
 
 void Task::searchName(std::string name) {
 	
@@ -56,6 +140,7 @@ void Task::searchName(std::string name) {
 	for (User u : _users) {
 		if (ModifyString::capitalize(u.name) == ModifyString::capitalize(name)) {
 			found = true;
+			_searchedNames.push_back(u);
 			break;
 		}
 	}
@@ -66,6 +151,8 @@ void Task::searchName(std::string name) {
 	else {
 		std::cout << ModifyString::title(name) << " was not found.\n";
 	}
+
+	printHeading();
 }
 
 void Task::execute() {
@@ -81,7 +168,8 @@ void Task::execute() {
 		}
 	}
 
-	sum();
+	auto s = sum();
+	auto h = searchLargestBalance();
 
 	std::cout << "Thank you for using my program\n";
 }

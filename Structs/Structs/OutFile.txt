@@ -1,0 +1,16 @@
+Higher Balance:
+ID #      NAME                    BALANCE DUE
+----      --------------------    -----------
+1002      Steve Woolston          $   1423.20
+
+Total Balance for all persons:
+$   4080.53
+
+Search Names:
+ID #      NAME                    BALANCE DUE
+1002      Steve Woolston          $   1423.20
+1008      Chris Carroll           $     32.35
+1009      Lisa Covi               $    332.35
+1010      Florence Rousseau       $   1323.38
+
+               Total Balance Due: $   3111.28
